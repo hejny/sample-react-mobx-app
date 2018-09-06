@@ -1,18 +1,19 @@
 import './Message.css';
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IAppModel } from '../../model/IAppModel';
+import { IAppState } from '../../model/IAppState';
+import { IObservableObject } from 'mobx';
 
 interface IMessageProps {
-    appModel: IAppModel;
+    appState: IAppState & IObservableObject;
 }
 
-export const Message = observer(({ appModel }: IMessageProps) => {
+export const Message = observer(({ appState }: IMessageProps) => {
     return (
         <div className="Message">
             <textarea
-                defaultValue={appModel.message}
-                onChange={(event) => (appModel.message = event.target.value)}
+                defaultValue={appState.message}
+                onChange={(event) => (appState.message = event.target.value)}
             />
         </div>
     );

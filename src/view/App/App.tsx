@@ -2,19 +2,20 @@ import './App.css';
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Message } from '../Message/Message';
-import { IAppModel } from '../../model/IAppModel';
+import { IAppState } from '../../model/IAppState';
+import { IObservableObject } from 'mobx';
 
 interface IAppProps {
-    appModel: IAppModel;
+    appState: IAppState & IObservableObject;
 }
 
-export const App = observer(({ appModel }: IAppProps) => {
+export const App = observer(({ appState }: IAppProps) => {
     return (
         <div className="App">
-            <Message {...{ appModel }} />
+            <Message {...{ appState }} />
 
-            <div>Char count: {appModel.message.length}</div>
-            <div>Word count: {appModel.message.split(' ').length}</div>
+            <div>Char count: {appState.message.length}</div>
+            <div>Word count: {appState.message.split(' ').length}</div>
         </div>
     );
 });

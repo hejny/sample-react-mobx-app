@@ -1,3 +1,3 @@
-export interface ISaveModel {
-    saved: Date;
+export interface ISaveState {
+    saved: Date | null;
 }

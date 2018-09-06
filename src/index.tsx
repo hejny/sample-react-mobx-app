@@ -5,8 +5,8 @@ import { saveAppStateAfterChange } from './controller/saver/saveAppStateAfterCha
 import { restoreAppState } from './controller/saver/restoreAppState';
 
 const appState = restoreAppState();
-saveAppStateAfterChange(appState);
+const saveState = saveAppStateAfterChange(appState);
 
-ReactDOM.render(<App {...{ appState }} />, document.getElementById(
+ReactDOM.render(<App {...{ appState, saveState }} />, document.getElementById(
     'root',
 ) as HTMLElement);

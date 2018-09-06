@@ -4,18 +4,23 @@ import { observer } from 'mobx-react';
 import { Message } from '../Message/Message';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
+import { ISaveState } from '../../controller/saver/ISaveState';
 
 interface IAppProps {
     appState: IAppState & IObservableObject;
+    saveState: ISaveState & IObservableObject;
 }
 
-export const App = observer(({ appState }: IAppProps) => {
+export const App = observer(({ appState, saveState }: IAppProps) => {
     return (
         <div className="App">
             <Message {...{ appState }} />
 
             <div>Char count: {appState.message.length}</div>
             <div>Word count: {appState.message.split(' ').length}</div>
+            {saveState.saved && (
+                <div>Saved at {saveState.saved.toString()}</div>
+            )}
         </div>
     );
 });

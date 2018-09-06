@@ -12,9 +12,7 @@ export const Message = observer(({ appModel }: IMessageProps) => {
         <div className="Message">
             <textarea
                 defaultValue={appModel.message}
-                onChange={(event) =>
-                    (appModel.message = event.target.value)
-                }
+                onChange={(event) => (appModel.message = event.target.value)}
             />
         </div>
     );

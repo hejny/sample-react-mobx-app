@@ -1,3 +1,3 @@
-export interface IAppModel{
-    message:string
+export interface IAppModel {
+    message: string;
 }

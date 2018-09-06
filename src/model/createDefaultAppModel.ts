@@ -1,9 +1,7 @@
-import { IAppModel } from "./IAppModel";
+import { IAppModel } from './IAppModel';
 
-export function createDefaultAppModel():IAppModel{
-    return(
-        {
-            message: 'Hello World!'
-        }
-    );
+export function createDefaultAppModel(): IAppModel {
+    return {
+        message: 'Hello World!',
+    };
 }

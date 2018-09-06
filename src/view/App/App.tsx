@@ -11,9 +11,10 @@ interface IAppProps {
 export const App = observer(({ appModel }: IAppProps) => {
     return (
         <div className="App">
-            <Message {...{appModel}} />
+            <Message {...{ appModel }} />
 
             <div>Char count: {appModel.message.length}</div>
+            <div>Word count: {appModel.message.split(' ').length}</div>
         </div>
     );
 });

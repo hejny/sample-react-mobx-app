@@ -5,6 +5,7 @@ import { Message } from '../Message/Message';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import { ISaveState } from '../../controller/saver/ISaveState';
+import { Scene } from '../Scene/Scene';
 
 interface IAppProps {
     appState: IAppState & IObservableObject;
@@ -21,6 +22,8 @@ export const Root = observer(({ appState, saveState }: IAppProps) => {
             {saveState.saved && (
                 <div>Saved at {saveState.saved.toString()}</div>
             )}
+
+            <Scene {...{ appState }} />
         </div>
     );
 });

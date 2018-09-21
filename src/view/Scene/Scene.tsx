@@ -15,7 +15,10 @@ export const Scene = observer(({ appState }: ISceneProps) => {
             <canvas
                 ref={(canvasElement) => {
                     if (canvasElement) {
-                        console.log('canvasElement', canvasElement);
+                        console.log(
+                            'Canvas element for 3D scene:',
+                            canvasElement,
+                        );
 
                         const world = new World(canvasElement, appState);
                         world.run();

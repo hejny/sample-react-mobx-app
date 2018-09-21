@@ -6,6 +6,7 @@ import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import { ISaveState } from '../../controller/saver/ISaveState';
 import { Scene } from '../Scene/Scene';
+import { Wall } from '../Wall/Wall';
 
 interface IAppProps {
     appState: IAppState & IObservableObject;
@@ -21,17 +22,33 @@ export const Root = observer(({ appState, saveState }: IAppProps) => {
                 <div>Saved at {saveState.saved.toString()}</div>
             )}
 
+            <div>
+                Controllers:
+                {appState.controllers.map((controller) => (
+                    <div>
+                        [{controller.position.x},{controller.position.y},
+                        {controller.position.z}]
+                    </div>
+                ))}
+            </div>
 
-            {appState.corners?(
-                <button onClick={()=>{appState.corners=null;appState.calibrationProgress=[];}}>ReCalibrate</button>
-            ):(
+            <Wall {...{ appState }} />
+
+            {appState.corners ? (
+                <button
+                    onClick={() => {
+                        appState.corners = null;
+                        appState.calibrationProgress = [];
+                    }}
+                >
+                    ReCalibrate
+                </button>
+            ) : (
                 <div>
-                    Calibrating {appState.calibrationProgress.length+1}. corner.
+                    Calibrating {appState.calibrationProgress.length + 1}.
+                    corner.
                 </div>
             )}
-
-
-
 
             <Scene {...{ appState }} />
         </div>

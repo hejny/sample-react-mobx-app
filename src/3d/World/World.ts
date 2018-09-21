@@ -50,13 +50,13 @@ export default class World {
             const id = uuidv4();
             console.log(`Controller ${id} loaded.`, controller);
             //todo on unload
-            this.appState.controllers.push({
+            this.situationState.controllers.push({
                 id,
                 position: { x: 0, y: 0, z: 0 },
             });
 
             this.scene.registerAfterRender(() => {
-                const controllerState = this.appState.controllers.find(
+                const controllerState = this.situationState.controllers.find(
                     (controller) => controller.id == id,
                 )!;
 

@@ -6,6 +6,7 @@ import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import World from '../../3d/World/World';
 import { ISituationState } from '../../model/ISituationState';
+import { convertSceneVectorToWallVector } from '../../tools/convertSceneVectorToWallVector';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
@@ -29,10 +30,12 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
                         const ctx = canvasElement.getContext('2d')!;
 
                         for (const controller of situationState.controllers) {
+
+                            const wallVector = convertSceneVectorToWallVector(controller.position,appState.corners!);
                             ctx.arc(
-                                controller.position.x * 100,
-                                controller.position.y * 100,
-                                10,
+                                wallVector.x,
+                                wallVector.y,
+                                5,
                                 0,
                                 Math.PI * 2,
                             );

@@ -17,11 +17,21 @@ export const Root = observer(({ appState, saveState }: IAppProps) => {
         <div className="Root">
             <Message {...{ appState }} />
 
-            <div>Char count: {appState.message.length}</div>
-            <div>Word count: {appState.message.split(' ').length}</div>
             {saveState.saved && (
                 <div>Saved at {saveState.saved.toString()}</div>
             )}
+
+
+            {appState.corners?(
+                <button onClick={()=>{appState.corners=null;appState.calibrationProgress=[];}}>ReCalibrate</button>
+            ):(
+                <div>
+                    Calibrating {appState.calibrationProgress.length+1}. corner.
+                </div>
+            )}
+
+
+
 
             <Scene {...{ appState }} />
         </div>

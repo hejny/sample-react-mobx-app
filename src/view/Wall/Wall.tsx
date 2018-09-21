@@ -33,8 +33,8 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
 
                             const wallVector = convertSceneVectorToWallVector(controller.position,appState.corners!);
                             ctx.arc(
-                                wallVector.x,
-                                wallVector.y,
+                                wallVector.x*600,//todo not hardcode //todo ratio
+                                wallVector.y*600,
                                 5,
                                 0,
                                 Math.PI * 2,

@@ -42,9 +42,46 @@ export default class World {
 
         this.VRHelper = this.scene.createDefaultVRExperience();
 
-        //this.worldGenerator = new WorldGenerator(this);
-        //this.worldGenerator.generateWorld();
+
+        this.VRHelper.onControllerMeshLoadedObservable.add((controller)=>{
+            console.log('Controller loaded.',controller);
+
+
+            const box = BABYLON.Mesh.CreateBox('skyBox', 1, this.scene);
+
+
+            controller.onTriggerStateChangedObservable.add((gamepadButton)=>{
+                
+                console.log('Trigger state changed.',gamepadButton);
+
+
+                
+                box.position = controller.position.clone();
+
+
+
+             });
+
+
+
+        });
+
+        /*
+        (this.VRHelper.currentVRCamera as BABYLON.WebVRFreeCamera).onControllersAttachedObservable.add((x)=>{
+            console.log('onControllersAttachedObservable',x);
+        });
+
+        
+        (this.VRHelper.currentVRCamera as BABYLON.WebVRFreeCamera).onControllerMeshLoadedObservable.add((x)=>{
+            console.log('onControllerMeshLoadedObservable',x);
+        });*/
+    
     }
+
+
+    //todo set controlls
+    //todo create world
+
 
     dispose() {
         this.scene.dispose(); //todo is it all?

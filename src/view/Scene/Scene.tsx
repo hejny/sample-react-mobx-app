@@ -4,12 +4,14 @@ import { observer } from 'mobx-react';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import World from '../../3d/World/World';
+import { ISituationState } from '../../model/ISituationState';
 
 interface ISceneProps {
     appState: IAppState & IObservableObject;
+    situationState: ISituationState & IObservableObject;
 }
 
-export const Scene = observer(({ appState }: ISceneProps) => {
+export const Scene = observer(({ appState, situationState }: ISceneProps) => {
     return (
         <div className="Scene">
             <canvas
@@ -20,7 +22,11 @@ export const Scene = observer(({ appState }: ISceneProps) => {
                             canvasElement,
                         );
 
-                        const world = new World(canvasElement, appState);
+                        const world = new World(
+                            canvasElement,
+                            appState,
+                            situationState,
+                        );
                         world.run();
                     }
                 }}

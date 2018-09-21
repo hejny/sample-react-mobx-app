@@ -5,23 +5,42 @@ import { observer } from 'mobx-react';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import World from '../../3d/World/World';
+import { ISituationState } from '../../model/ISituationState';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
+    situationState: ISituationState & IObservableObject;
 }
 
-export const Wall = observer(({ appState }: IWallProps) => {
+export const Wall = observer(({ appState, situationState }: IWallProps) => {
     return (
         <div className="Wall">
             <canvas
+                data-refresh={
+                    JSON.stringify(situationState.controllers) /*todo optimize*/
+                }
                 ref={(canvasElement) => {
                     if (canvasElement) {
-                        console.log('Canvas element for wall:', canvasElement);
+                        //console.log('Canvas element for wall:', canvasElement);
 
                         canvasElement.width = canvasElement.getBoundingClientRect().width;
                         canvasElement.height = canvasElement.getBoundingClientRect().height;
 
                         const ctx = canvasElement.getContext('2d')!;
+
+                        for (const controller of situationState.controllers) {
+                            ctx.arc(
+                                controller.position.x * 100,
+                                controller.position.y * 100,
+                                10,
+                                0,
+                                Math.PI * 2,
+                            );
+                            ctx.fill();
+                        }
+
+                        TC;
+                        /*
                         ctx.lineWidth = 10;
                         ctx.lineCap = 'round';
 
@@ -50,6 +69,7 @@ export const Wall = observer(({ appState }: IWallProps) => {
                                 lastFrame = frame;
                             });
                         });
+                        */
                     }
                 }}
             />

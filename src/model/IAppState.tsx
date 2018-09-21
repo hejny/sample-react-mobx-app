@@ -4,7 +4,6 @@ import { IController } from './IController';
 
 export interface IAppState {
     name: string;
-    controllers: IController[];
     corners: ICorners | null;
     calibrationProgress: IVector3[];
 }

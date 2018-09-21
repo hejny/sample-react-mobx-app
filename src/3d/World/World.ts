@@ -55,6 +55,11 @@ export default class World {
                 position: { x: 0, y: 0, z: 0 },
             });
 
+            const drawing:any = {
+                points: []
+            };
+            this.appState.drawings.push(drawing);
+
             this.scene.registerAfterRender(() => {
                 const controllerState = this.situationState.controllers.find(
                     (controller) => controller.id == id,
@@ -64,16 +69,29 @@ export default class World {
                 controllerState.position.y = controller.mesh!.position.y;
                 controllerState.position.z = controller.mesh!.position.z;
 
+                drawing.points.push({
+                    x:controller.mesh!.position.x,
+                    y:controller.mesh!.position.y,
+                    z:controller.mesh!.position.z
+                });
+
                 //console.log(controller.mesh!.position.x);
             });
 
             const box = BABYLON.Mesh.CreateBox('skyBox', 0.1, this.scene);
 
+            
+            
             controller.onTriggerStateChangedObservable.add((gamepadButton) => {
                 console.log('Trigger state changed.', gamepadButton);
 
                 box.position = controller.mesh!.position.clone();
             });
+
+
+
+
+
         });
 
         /*

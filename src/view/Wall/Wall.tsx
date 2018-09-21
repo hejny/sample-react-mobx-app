@@ -42,6 +42,24 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
                             ctx.fill();
                         }
 
+
+                        for (const drawing of appState.drawings) {
+                            const color =
+                                '#' +
+                                Math.floor(Math.random() * 16777215).toString(
+                                    16,
+                                );
+                            ctx.beginPath();
+                            ctx.moveTo(
+                                0,0
+                            );
+                            for (const point of drawing.points) {
+                                ctx.lineTo(frame.position.x, frame.position.y);
+                            }
+                            
+                                ctx.stroke();
+                        }
+
                         TC;
                         /*
                         ctx.lineWidth = 10;

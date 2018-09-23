@@ -43,7 +43,7 @@ export const Root = observer(
                     <button
                         onClick={() => {
                             appState.corners = null;
-                            appState.calibrationProgress = [];
+                            //appState.calibrationProgress = [];
                         }}
                     >
                         ReCalibrate

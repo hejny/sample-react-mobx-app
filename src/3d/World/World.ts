@@ -8,6 +8,7 @@ import { createGround } from './createGround';
 import { createSkybox } from './createSkybox';
 import * as uuidv4 from 'uuid/v4';
 import { ISituationState } from '../../model/ISituationState';
+import { babylonToCleanVector, cleanVectorToBabylon } from '../../tools/vectors';
 
 export default class World {
     public engine: BABYLON.Engine;
@@ -65,9 +66,8 @@ export default class World {
                     (controller) => controller.id == id,
                 )!;
 
-                controllerState.position.x = controller.mesh!.position.x; //todo better DRY
-                controllerState.position.y = controller.mesh!.position.y;
-                controllerState.position.z = controller.mesh!.position.z;
+                controllerState.position = babylonToCleanVector(controller.mesh!.position);
+
 
                 drawing.points.push({
                     x:controller.mesh!.position.x,
@@ -82,11 +82,47 @@ export default class World {
 
             
             
+
+
+
+
             controller.onTriggerStateChangedObservable.add((gamepadButton) => {
                 console.log('Trigger state changed.', gamepadButton);
 
+                if(!this.appState.corners){
+                    //---------------------------------------In calibration process
+                        if(gamepadButton.value===1){
+                        this.appState.calibrationProgress.push(babylonToCleanVector(controller.mesh!.position));
+
+
+                        if(this.appState.calibrationProgress.length===4){
+                            console.log('this.appState.calibrationProgress',this.appState.calibrationProgress);
+
+
+                            for(const cornerPosition of this.appState.calibrationProgress){
+                                const cornerMesh = BABYLON.Mesh.CreateSphere('skyBox', 5,0.1, this.scene);
+                                cornerMesh.position = cleanVectorToBabylon(cornerPosition);
+                            }
+
+                            
+                            /*this.appState.corners = {
+                              topLeft:
+                              topR  
+                            };*/
+                            this.appState.calibrationProgress = [];
+                        }
+                        }
+                       
+                    //---------------------------------------
+                }else{
+                    //---------------------------------------Drawing
+                    //---------------------------------------
+                }
                 box.position = controller.mesh!.position.clone();
             });
+
+
+
 
 
 

@@ -7,6 +7,7 @@ import { IObservableObject } from 'mobx';
 import World from '../../3d/World/World';
 import { ISituationState } from '../../model/ISituationState';
 import { convertSceneVectorToWallVector } from '../../tools/convertSceneVectorToWallVector';
+import { drawOnWallAppStateDrawing, drawOnWallSituationStateControllers } from '../../tools/drawWallDrawing';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
@@ -31,44 +32,8 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
 
                         const ctx = canvasElement.getContext('2d')!;
 
-                        for (const controller of situationState.controllers) {
-                            const wallVector = convertSceneVectorToWallVector(
-                                controller.position,
-                                appState.corners!,
-                            );
-                            ctx.arc(
-                                wallVector.x * 600, //todo not hardcode //todo ratio
-                                wallVector.y * 600,
-                                5,
-                                0,
-                                Math.PI * 2,
-                            );
-                            ctx.fill();
-                        }
-
-                        for (const drawing of appState.drawings) {
-                            const color =
-                                '#' +
-                                Math.floor(Math.random() * 16777215).toString(
-                                    16,
-                                );
-                            ctx.beginPath();
-                            ctx.moveTo(0, 0);
-                            for (const point of drawing.points) {
-                                //console.log( point.x, point.y);
-                                const wallVector = convertSceneVectorToWallVector(
-                                    point,
-                                    appState.corners!,
-                                );
-                                ctx.lineTo(
-                                    wallVector.x * 600,
-                                    wallVector.y * 600,
-                                );
-                                //console.log(point.x,point.y,point.z,wallVector);
-                            }
-
-                            ctx.stroke();
-                        }
+                        drawOnWallAppStateDrawing(appState.drawings,appState.corners!,ctx);
+                        drawOnWallSituationStateControllers(situationState.controllers,appState.corners!,ctx);
 
                         TC;
                         /*

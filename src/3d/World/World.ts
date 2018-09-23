@@ -18,8 +18,12 @@ export default class World {
     public scene: BABYLON.Scene;
     public webVR: boolean;
     public lights: BABYLON.Light[];
+
+    //todo maybe encapsulate meshes
     public groundMesh: BABYLON.AbstractMesh;
     public skyboxMesh: BABYLON.AbstractMesh;
+    public wallMesh: null|BABYLON.AbstractMesh = null;
+
     public materialFactory: MaterialFactory;
     public VRHelper: BABYLON.VRExperienceHelper;
 
@@ -47,6 +51,7 @@ export default class World {
         this.materialFactory = new MaterialFactory(this);
         this.groundMesh = createGround(this.scene, this.materialFactory);
         this.skyboxMesh = createSkybox(this.scene);
+        this.renderWallMesh();
 
         this.VRHelper = this.scene.createDefaultVRExperience();
 
@@ -102,7 +107,7 @@ export default class World {
                                 this.appState.calibrationProgress,
                             );
 
-                            for (const cornerPosition of this.appState
+                            /*for (const cornerPosition of this.appState
                                 .calibrationProgress) {
                                 const cornerMesh = BABYLON.Mesh.CreateSphere(
                                     'skyBox',
@@ -113,13 +118,15 @@ export default class World {
                                 cornerMesh.position = cleanVectorToBabylon(
                                     cornerPosition,
                                 );
-                            }
+                            }*/
 
-                            /*this.appState.corners = {
-                              topLeft:
-                              topR  
-                            };*/
+
+
+                            const [topLeft,topRight,bottomRight,bottomLeft] = this.appState.calibrationProgress;
+                            this.appState.corners = {topLeft,topRight,bottomLeft,bottomRight};
                             this.appState.calibrationProgress = [];
+                            this.renderWallMesh();
+
                         }
                     }
 
@@ -144,6 +151,26 @@ export default class World {
 
     //todo set controlls
     //todo create world
+    
+
+    renderWallMesh(){
+
+        if(!this.appState.corners){
+            return;//todo maybe throw Error
+        }
+
+        if(this.wallMesh){
+            this.wallMesh.dispose();
+        }
+
+        const {topLeft,topRight,bottomLeft,bottomRight} = this.appState.corners;
+        const pathArray = [
+            [cleanVectorToBabylon(topLeft),cleanVectorToBabylon(topRight)],
+            [cleanVectorToBabylon(bottomLeft),cleanVectorToBabylon(bottomRight)]
+        ];
+        this.wallMesh = BABYLON.MeshBuilder.CreateRibbon("ribbon", { pathArray },  this.scene );
+    }
+
 
     dispose() {
         this.scene.dispose(); //todo is it all?

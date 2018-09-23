@@ -13,6 +13,8 @@ interface IWallProps {
     situationState: ISituationState & IObservableObject;
 }
 
+//todo hide when appState.corners calibration in process
+
 export const Wall = observer(({ appState, situationState }: IWallProps) => {
     return (
         <div className="Wall">
@@ -30,18 +32,19 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
                         const ctx = canvasElement.getContext('2d')!;
 
                         for (const controller of situationState.controllers) {
-
-                            const wallVector = convertSceneVectorToWallVector(controller.position,appState.corners!);
+                            const wallVector = convertSceneVectorToWallVector(
+                                controller.position,
+                                appState.corners!,
+                            );
                             ctx.arc(
-                                wallVector.x*600,//todo not hardcode //todo ratio
-                                wallVector.y*600,
+                                wallVector.x * 600, //todo not hardcode //todo ratio
+                                wallVector.y * 600,
                                 5,
                                 0,
                                 Math.PI * 2,
                             );
                             ctx.fill();
                         }
-
 
                         for (const drawing of appState.drawings) {
                             const color =
@@ -50,14 +53,21 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
                                     16,
                                 );
                             ctx.beginPath();
-                            ctx.moveTo(
-                                0,0
-                            );
+                            ctx.moveTo(0, 0);
                             for (const point of drawing.points) {
-                                ctx.lineTo(frame.position.x, frame.position.y);
+                                //console.log( point.x, point.y);
+                                const wallVector = convertSceneVectorToWallVector(
+                                    point,
+                                    appState.corners!,
+                                );
+                                ctx.lineTo(
+                                    wallVector.x * 600,
+                                    wallVector.y * 600,
+                                );
+                                //console.log(point.x,point.y,point.z,wallVector);
                             }
-                            
-                                ctx.stroke();
+
+                            ctx.stroke();
                         }
 
                         TC;

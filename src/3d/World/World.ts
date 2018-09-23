@@ -1,5 +1,5 @@
 import { IObservableObject } from 'mobx';
-import { IAppState } from './../../model/IAppState';
+import { IAppState, IDrawing } from './../../model/IAppState';
 import { MaterialFactory } from './../MaterialFactory';
 import * as BABYLON from 'babylonjs';
 import { createScene } from './createScene';
@@ -8,7 +8,10 @@ import { createGround } from './createGround';
 import { createSkybox } from './createSkybox';
 import * as uuidv4 from 'uuid/v4';
 import { ISituationState } from '../../model/ISituationState';
-import { babylonToCleanVector, cleanVectorToBabylon } from '../../tools/vectors';
+import {
+    babylonToCleanVector,
+    cleanVectorToBabylon,
+} from '../../tools/vectors';
 
 export default class World {
     public engine: BABYLON.Engine;
@@ -48,86 +51,84 @@ export default class World {
         this.VRHelper = this.scene.createDefaultVRExperience();
 
         this.VRHelper.onControllerMeshLoadedObservable.add((controller) => {
-            const id = uuidv4();
-            console.log(`Controller ${id} loaded.`, controller);
-            //todo on unload
-            this.situationState.controllers.push({
-                id,
-                position: { x: 0, y: 0, z: 0 },
-            });
-
-            const drawing:any = {
-                points: []
-            };
-            this.appState.drawings.push(drawing);
-
-            this.scene.registerAfterRender(() => {
-                const controllerState = this.situationState.controllers.find(
-                    (controller) => controller.id == id,
-                )!;
-
-                controllerState.position = babylonToCleanVector(controller.mesh!.position);
-
-
-                drawing.points.push({
-                    x:controller.mesh!.position.x,
-                    y:controller.mesh!.position.y,
-                    z:controller.mesh!.position.z
+            {
+                const id = uuidv4();
+                console.log(`Controller ${id} loaded.`, controller);
+                //todo on unload
+                this.situationState.controllers.push({
+                    id,
+                    position: { x: 0, y: 0, z: 0 },
                 });
+                this.scene.registerAfterRender(() => {
+                    const controllerState = this.situationState.controllers.find(
+                        (controller) => controller.id == id,
+                    )!;
+                    controllerState.position = babylonToCleanVector(
+                        controller.mesh!.position,
+                    );
+                });
+            }
 
-                //console.log(controller.mesh!.position.x);
-            });
-
-            const box = BABYLON.Mesh.CreateBox('skyBox', 0.1, this.scene);
-
-            
-            
-
-
-
+            {
+                const id = uuidv4();
+                const drawing: IDrawing = {
+                    id,
+                    points: [],
+                };
+                this.appState.drawings.push(drawing);
+                this.scene.registerAfterRender(() => {
+                    const drawing = this.appState.drawings.find(
+                        (drawing) => drawing.id == id,
+                    )!;
+                    drawing.points.push(
+                        babylonToCleanVector(controller.mesh!.position),
+                    );
+                });
+            }
 
             controller.onTriggerStateChangedObservable.add((gamepadButton) => {
                 console.log('Trigger state changed.', gamepadButton);
 
-                if(!this.appState.corners){
+                if (!this.appState.corners) {
                     //---------------------------------------In calibration process
-                        if(gamepadButton.value===1){
-                        this.appState.calibrationProgress.push(babylonToCleanVector(controller.mesh!.position));
+                    if (gamepadButton.value === 1) {
+                        this.appState.calibrationProgress.push(
+                            babylonToCleanVector(controller.mesh!.position),
+                        );
 
+                        if (this.appState.calibrationProgress.length === 4) {
+                            console.log(
+                                'this.appState.calibrationProgress',
+                                this.appState.calibrationProgress,
+                            );
 
-                        if(this.appState.calibrationProgress.length===4){
-                            console.log('this.appState.calibrationProgress',this.appState.calibrationProgress);
-
-
-                            for(const cornerPosition of this.appState.calibrationProgress){
-                                const cornerMesh = BABYLON.Mesh.CreateSphere('skyBox', 5,0.1, this.scene);
-                                cornerMesh.position = cleanVectorToBabylon(cornerPosition);
+                            for (const cornerPosition of this.appState
+                                .calibrationProgress) {
+                                const cornerMesh = BABYLON.Mesh.CreateSphere(
+                                    'skyBox',
+                                    5,
+                                    0.1,
+                                    this.scene,
+                                );
+                                cornerMesh.position = cleanVectorToBabylon(
+                                    cornerPosition,
+                                );
                             }
 
-                            
                             /*this.appState.corners = {
                               topLeft:
                               topR  
                             };*/
                             this.appState.calibrationProgress = [];
                         }
-                        }
-                       
+                    }
+
                     //---------------------------------------
-                }else{
+                } else {
                     //---------------------------------------Drawing
                     //---------------------------------------
                 }
-                box.position = controller.mesh!.position.clone();
             });
-
-
-
-
-
-
-
-
         });
 
         /*

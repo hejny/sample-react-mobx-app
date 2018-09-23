@@ -55,6 +55,19 @@ export const Root = observer(
                     </div>
                 )}
 
+                <div>
+                    Wall contains {appState.drawings.length} drawings.
+                    <button
+                        onClick={() => {
+                            if (confirm('Are you sure?')) {
+                                appState.drawings = [];
+                            }
+                        }}
+                    >
+                        clean
+                    </button>
+                </div>
+
                 <Scene {...{ appState, situationState }} />
             </div>
         );

@@ -9,8 +9,7 @@ export interface IAppState {
     drawings: IDrawing[];
 }
 
-
-export interface IDrawing{
+export interface IDrawing {
     id: string;
     points: IVector3[];
 }

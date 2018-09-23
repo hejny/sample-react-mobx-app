@@ -64,7 +64,7 @@ export default class World {
             'wallTexture',
             1024,
             this.scene,
-            false,
+            true,
         );
         const wallTextureContext = this.wallTexture.getContext();
 
@@ -93,7 +93,9 @@ export default class World {
             'wallMaterial',
             this.scene,
         );
-        this.wallMaterial.ambientTexture = this.wallTexture;
+        //this.wallMaterial.ambientTexture = this.wallTexture;
+        this.wallMaterial.ambientColor = BABYLON.Color3.FromHexString('#00ff00');
+        this.wallMaterial.diffuseTexture = this.wallTexture;
         this.renderWallMesh();
 
         this.VRHelper = this.scene.createDefaultVRExperience();
@@ -241,6 +243,9 @@ export default class World {
             this.scene,
         );
         this.wallMesh.material = this.wallMaterial;
+        console.log('material',this.wallMaterial);
+        console.log('texture',this.wallMaterial.ambientTexture);
+
     }
 
     dispose() {

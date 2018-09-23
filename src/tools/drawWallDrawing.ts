@@ -25,6 +25,7 @@ export function drawOnWallAppStateDrawing(
             //console.log(point.x,point.y,point.z,wallVector);
         }
 
+        ctx.strokeStyle = 'blue';
         ctx.stroke();
     }
 }
@@ -46,6 +47,7 @@ export function drawOnWallSituationStateControllers(
             0,
             Math.PI * 2,
         );
+        ctx.fillStyle = 'red';
         ctx.fill();
     }
 }

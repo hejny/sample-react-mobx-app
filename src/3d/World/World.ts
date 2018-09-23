@@ -12,6 +12,10 @@ import {
     babylonToCleanVector,
     cleanVectorToBabylon,
 } from '../../tools/vectors';
+import {
+    drawOnWallAppStateDrawing,
+    drawOnWallSituationStateControllers,
+} from '../../tools/drawWallDrawing';
 
 export default class World {
     public engine: BABYLON.Engine;
@@ -22,7 +26,10 @@ export default class World {
     //todo maybe encapsulate meshes
     public groundMesh: BABYLON.AbstractMesh;
     public skyboxMesh: BABYLON.AbstractMesh;
-    public wallMesh: null|BABYLON.AbstractMesh = null;
+    public wallMesh: null | BABYLON.AbstractMesh = null;
+    //todo maybe encapsulate wall
+    public wallMaterial: BABYLON.StandardMaterial;
+    public wallTexture: BABYLON.DynamicTexture;
 
     public materialFactory: MaterialFactory;
     public VRHelper: BABYLON.VRExperienceHelper;
@@ -51,11 +58,51 @@ export default class World {
         this.materialFactory = new MaterialFactory(this);
         this.groundMesh = createGround(this.scene, this.materialFactory);
         this.skyboxMesh = createSkybox(this.scene);
+
+        //todo to separate file
+        this.wallTexture = new BABYLON.DynamicTexture(
+            'wallTexture',
+            1024,
+            this.scene,
+            false,
+        );
+        const wallTextureContext = this.wallTexture.getContext();
+
+        this.scene.registerBeforeRender(() => {
+            if (this.appState.corners) {
+                //console.log(wallTextureContext);
+                console.log('dddd');
+
+                wallTextureContext.clearRect(0, 0, wallTextureContext.canvas.width, wallTextureContext.canvas.height);
+                drawOnWallAppStateDrawing(
+                    this.appState.drawings,
+                    this.appState.corners!,
+                    wallTextureContext,
+                );
+                drawOnWallSituationStateControllers(
+                    this.situationState.controllers,
+                    this.appState.corners!,
+                    wallTextureContext,
+                );
+
+                this.wallTexture.update();
+            }
+        });
+
+        this.wallMaterial = new BABYLON.StandardMaterial(
+            'wallMaterial',
+            this.scene,
+        );
+        this.wallMaterial.ambientTexture = this.wallTexture;
         this.renderWallMesh();
 
         this.VRHelper = this.scene.createDefaultVRExperience();
 
         this.VRHelper.onControllerMeshLoadedObservable.add((controller) => {
+
+            let controllerPressed = false;
+
+
             {
                 const id = uuidv4();
                 console.log(`Controller ${id} loaded.`, controller);
@@ -82,12 +129,14 @@ export default class World {
                 };
                 this.appState.drawings.push(drawing);
                 this.scene.registerAfterRender(() => {
+                    if(controllerPressed){
                     const drawing = this.appState.drawings.find(
                         (drawing) => drawing.id == id,
                     )!;
                     drawing.points.push(
                         babylonToCleanVector(controller.mesh!.position),
                     );
+                    }
                 });
             }
 
@@ -120,19 +169,31 @@ export default class World {
                                 );
                             }*/
 
-
-
-                            const [topLeft,topRight,bottomRight,bottomLeft] = this.appState.calibrationProgress;
-                            this.appState.corners = {topLeft,topRight,bottomLeft,bottomRight};
+                            const [
+                                topLeft,
+                                topRight,
+                                bottomRight,
+                                bottomLeft,
+                            ] = this.appState.calibrationProgress;
+                            this.appState.corners = {
+                                topLeft,
+                                topRight,
+                                bottomLeft,
+                                bottomRight,
+                            };
                             this.appState.calibrationProgress = [];
                             this.renderWallMesh();
-
                         }
                     }
 
                     //---------------------------------------
                 } else {
                     //---------------------------------------Drawing
+                    if (gamepadButton.value === 1) {
+                        controllerPressed = true;
+                    }else{
+                        controllerPressed = false;
+                    }
                     //---------------------------------------
                 }
             });
@@ -151,26 +212,36 @@ export default class World {
 
     //todo set controlls
     //todo create world
-    
 
-    renderWallMesh(){
-
-        if(!this.appState.corners){
-            return;//todo maybe throw Error
+    renderWallMesh() {
+        if (!this.appState.corners) {
+            return; //todo maybe throw Error
         }
 
-        if(this.wallMesh){
+        if (this.wallMesh) {
             this.wallMesh.dispose();
         }
 
-        const {topLeft,topRight,bottomLeft,bottomRight} = this.appState.corners;
+        const {
+            topLeft,
+            topRight,
+            bottomLeft,
+            bottomRight,
+        } = this.appState.corners;
         const pathArray = [
-            [cleanVectorToBabylon(topLeft),cleanVectorToBabylon(topRight)],
-            [cleanVectorToBabylon(bottomLeft),cleanVectorToBabylon(bottomRight)]
+            [cleanVectorToBabylon(topLeft), cleanVectorToBabylon(topRight)],
+            [
+                cleanVectorToBabylon(bottomLeft),
+                cleanVectorToBabylon(bottomRight),
+            ],
         ];
-        this.wallMesh = BABYLON.MeshBuilder.CreateRibbon("ribbon", { pathArray },  this.scene );
+        this.wallMesh = BABYLON.MeshBuilder.CreateRibbon(
+            'ribbon',
+            { pathArray },
+            this.scene,
+        );
+        this.wallMesh.material = this.wallMaterial;
     }
-
 
     dispose() {
         this.scene.dispose(); //todo is it all?

@@ -7,7 +7,11 @@ import { IObservableObject } from 'mobx';
 import World from '../../3d/World/World';
 import { ISituationState } from '../../model/ISituationState';
 import { convertSceneVectorToWallVector } from '../../tools/convertSceneVectorToWallVector';
-import { drawOnWallAppStateDrawing, drawOnWallSituationStateControllers } from '../../tools/drawWallDrawing';
+import {
+    drawOnWallAppStateDrawing,
+    drawOnWallSituationStateControllers,
+} from '../../tools/drawWallDrawing';
+import { render } from 'react-dom';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
@@ -20,9 +24,6 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
     return (
         <div className="Wall">
             <canvas
-                data-refresh={
-                    JSON.stringify(situationState.controllers) /*todo optimize*/
-                }
                 ref={(canvasElement) => {
                     if (canvasElement) {
                         //console.log('Canvas element for wall:', canvasElement);
@@ -32,8 +33,22 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
 
                         const ctx = canvasElement.getContext('2d')!;
 
-                        drawOnWallAppStateDrawing(appState.drawings,appState.corners!,ctx);
-                        drawOnWallSituationStateControllers(situationState.controllers,appState.corners!,ctx);
+                        const render = ()=>{
+                            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                            drawOnWallAppStateDrawing(
+                                appState.drawings,
+                                appState.corners!,
+                                ctx,
+                            );
+                            drawOnWallSituationStateControllers(
+                                situationState.controllers,
+                                appState.corners!,
+                                ctx,
+                            );
+
+                            requestAnimationFrame(render);
+                        }
+                        render();
 
                         TC;
                         /*

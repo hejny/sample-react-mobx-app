@@ -1,6 +1,6 @@
-import { IVector3 } from './IVectors';
+import { IFrame } from './IAppState';
 
 export interface IController {
     id: string;
-    position: IVector3;
+    currentFrame: IFrame;
 }

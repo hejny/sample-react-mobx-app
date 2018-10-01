@@ -70,10 +70,10 @@ export default class World {
 
         this.scene.registerBeforeRender(() => {
             if (this.appState.corners) {
-                //console.log(wallTextureContext);
-                console.log('dddd');
-
-                wallTextureContext.clearRect(0, 0, wallTextureContext.canvas.width, wallTextureContext.canvas.height);
+                
+                wallTextureContext.fillStyle = 'white';
+                wallTextureContext.fillRect(0, 0, wallTextureContext.canvas.width, wallTextureContext.canvas.height);
+                //wallTextureContext.clearRect(0, 0, wallTextureContext.canvas.width, wallTextureContext.canvas.height);
                 drawOnWallAppStateDrawing(
                     this.appState.drawings,
                     this.appState.corners!,
@@ -93,9 +93,7 @@ export default class World {
             'wallMaterial',
             this.scene,
         );
-        //this.wallMaterial.ambientTexture = this.wallTexture;
-        this.wallMaterial.ambientColor = BABYLON.Color3.FromHexString('#00ff00');
-        this.wallMaterial.diffuseTexture = this.wallTexture;
+        this.wallMaterial.ambientTexture = this.wallTexture;
         this.renderWallMesh();
 
         this.VRHelper = this.scene.createDefaultVRExperience();
@@ -111,15 +109,22 @@ export default class World {
                 //todo on unload
                 this.situationState.controllers.push({
                     id,
-                    position: { x: 0, y: 0, z: 0 },
+                    currentFrame: {
+                        position: { x: 0, y: 0, z: 0 },
+                        rotation: null
+                    }
+                    
                 });
                 this.scene.registerAfterRender(() => {
                     const controllerState = this.situationState.controllers.find(
                         (controller) => controller.id == id,
                     )!;
-                    controllerState.position = babylonToCleanVector(
-                        controller.mesh!.position,
-                    );
+                    controllerState.currentFrame = {
+                        position: babylonToCleanVector(
+                            controller.mesh!.position,
+                        );
+
+                    }
                 });
             }
 
@@ -127,7 +132,7 @@ export default class World {
                 const id = uuidv4();
                 const drawing: IDrawing = {
                     id,
-                    points: [],
+                    frames: [],
                 };
                 this.appState.drawings.push(drawing);
                 this.scene.registerAfterRender(() => {

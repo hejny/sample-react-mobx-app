@@ -15,9 +15,9 @@ export function drawOnWallAppStateDrawing(
         const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        for (const point of drawing.points) {
+        for (const frame of drawing.frames) {
             //console.log( point.x, point.y);
-            const wallVector = convertSceneVectorToWallVector(point, corners);
+            const wallVector = convertSceneVectorToWallVector(frame, corners);
             ctx.lineTo(
                 wallVector.x * ctx.canvas.width, //todo ratio
                 wallVector.y * ctx.canvas.height,
@@ -37,7 +37,7 @@ export function drawOnWallSituationStateControllers(
 ) {
     for (const controller of controllers) {
         const wallVector = convertSceneVectorToWallVector(
-            controller.position,
+            controller.currentFrame,
             corners,
         );
         ctx.arc(

@@ -11,7 +11,12 @@ export interface IAppState {
 
 export interface IDrawing {
     id: string;
-    points: IVector3[];
+    frames: IFrame[]
+}
+
+export interface IFrame{
+    position: IVector3
+    rotation: any
 }
 
 //todo f

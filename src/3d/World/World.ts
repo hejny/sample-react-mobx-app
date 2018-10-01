@@ -16,6 +16,7 @@ import {
     drawOnWallAppStateDrawing,
     drawOnWallSituationStateControllers,
 } from '../../tools/drawWallDrawing';
+import { babylonMeshToFrame } from '../../tools/frame';
 
 export default class World {
     public engine: BABYLON.Engine;
@@ -119,12 +120,7 @@ export default class World {
                     const controllerState = this.situationState.controllers.find(
                         (controller) => controller.id == id,
                     )!;
-                    controllerState.currentFrame = {
-                        position: babylonToCleanVector(
-                            controller.mesh!.position,
-                        );
-
-                    }
+                    controllerState.currentFrame = babylonMeshToFrame(controller.mesh!);
                 });
             }
 
@@ -140,8 +136,8 @@ export default class World {
                     const drawing = this.appState.drawings.find(
                         (drawing) => drawing.id == id,
                     )!;
-                    drawing.points.push(
-                        babylonToCleanVector(controller.mesh!.position),
+                    drawing.frames.push(
+                        babylonMeshToFrame(controller.mesh!)
                     );
                     }
                 });

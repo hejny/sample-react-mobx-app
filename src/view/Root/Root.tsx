@@ -30,9 +30,9 @@ export const Root = observer(
                     {situationState.controllers.map((controller) => (
                         <div key={controller.id}>
                             <b>{controller.id}:</b>[
-                            {controller.position.x.toFixed(2)},
-                            {controller.position.y.toFixed(2)},
-                            {controller.position.z.toFixed(2)}]
+                            {controller.currentFrame.position.x.toFixed(2)},
+                            {controller.currentFrame.position.y.toFixed(2)},
+                            {controller.currentFrame.position.z.toFixed(2)}]
                         </div>
                     ))}
                 </div>

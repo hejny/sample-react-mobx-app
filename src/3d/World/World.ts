@@ -1,3 +1,5 @@
+import { IVector3 } from './../../model/IVectors';
+import { CONTROLLER_SPRAY_DIRECTION } from './../../config';
 import { IObservableObject } from 'mobx';
 import { IAppState, IDrawing } from './../../model/IAppState';
 import { MaterialFactory } from './../MaterialFactory';
@@ -16,7 +18,7 @@ import {
     drawOnWallAppStateDrawing,
     drawOnWallSituationStateControllers,
 } from '../../tools/drawWallDrawing';
-import { babylonMeshToFrame } from '../../tools/frame';
+import { positionOnWallToPositionOnSquare } from '../../tools/positionOnWallToPositionOnSquare';
 
 export default class World {
     public engine: BABYLON.Engine;
@@ -70,19 +72,23 @@ export default class World {
         const wallTextureContext = this.wallTexture.getContext();
 
         this.scene.registerBeforeRender(() => {
-            if (this.appState.corners) {
-                
+            if (this.appState.corners && this.wallMesh) {
+                //todo better
+
                 wallTextureContext.fillStyle = 'white';
-                wallTextureContext.fillRect(0, 0, wallTextureContext.canvas.width, wallTextureContext.canvas.height);
+                wallTextureContext.fillRect(
+                    0,
+                    0,
+                    wallTextureContext.canvas.width,
+                    wallTextureContext.canvas.height,
+                );
                 //wallTextureContext.clearRect(0, 0, wallTextureContext.canvas.width, wallTextureContext.canvas.height);
                 drawOnWallAppStateDrawing(
                     this.appState.drawings,
-                    this.appState.corners!,
                     wallTextureContext,
                 );
                 drawOnWallSituationStateControllers(
                     this.situationState.controllers,
-                    this.appState.corners!,
                     wallTextureContext,
                 );
 
@@ -100,47 +106,122 @@ export default class World {
         this.VRHelper = this.scene.createDefaultVRExperience();
 
         this.VRHelper.onControllerMeshLoadedObservable.add((controller) => {
-
             let controllerPressed = false;
 
-
             {
-                const id = uuidv4();
-                console.log(`Controller ${id} loaded.`, controller);
-                //todo on unload
+                const controllerId = uuidv4();
+                console.log(
+                    `Controller with index ${
+                        controller.index
+                    } and id "${controllerId}" loaded.`,
+                    controller,
+                );
+                //todo make also on unload
+
                 this.situationState.controllers.push({
-                    id,
-                    currentFrame: {
-                        position: { x: 0, y: 0, z: 0 },
-                        rotation: null
-                    }
-                    
+                    id: controllerId,
+                    currentFrame: null,
                 });
-                this.scene.registerAfterRender(() => {
-                    const controllerState = this.situationState.controllers.find(
-                        (controller) => controller.id == id,
-                    )!;
-                    controllerState.currentFrame = babylonMeshToFrame(controller.mesh!);
-                });
-            }
 
-            {
-                const id = uuidv4();
+                const controllerMeshOnWall = BABYLON.Mesh.CreateSphere(
+                    'controllerMeshOnWall',
+                    5,
+                    0.03,
+                    this.scene,
+                );
+                const ray = new BABYLON.Ray(
+                    BABYLON.Vector3.Zero(),
+                    BABYLON.Vector3.One(),
+                    100,
+                );
+
+                this.scene.registerAfterRender(() => {
+                    //todo do not find every animation frame
+                    const controllerState = this.situationState.controllers.find(
+                        (controller) => controller.id == controllerId,
+                    )!;
+
+                    let positionOnWall: IVector3 | null = null;
+                    {
+                        ray.origin = controller.devicePosition;
+                        const matrix = new BABYLON.Matrix(); //todo can it be as a global const
+                        controller.deviceRotationQuaternion.toRotationMatrix(
+                            matrix,
+                        );
+                        ray.direction = BABYLON.Vector3.TransformCoordinates(
+                            CONTROLLER_SPRAY_DIRECTION,
+                            matrix,
+                        );
+
+                        const hit = this.wallMesh!.getScene().pickWithRay(
+                            ray,
+                            (mesh) => mesh === this.wallMesh,
+                        );
+                        if (hit) {
+                            if (hit.pickedPoint) {
+                                positionOnWall = babylonToCleanVector(
+                                    hit.pickedPoint,
+                                );
+                                controllerMeshOnWall.visibility = 1;
+                                controllerMeshOnWall.position = hit.pickedPoint;
+                            } else {
+                                positionOnWall = null;
+                                controllerMeshOnWall.visibility = 0;
+                            }
+                        }
+                    }
+                    controllerState.currentFrame = {
+                        time: new Date().getTime(),
+                        positionInSpace: babylonToCleanVector(
+                            controller.devicePosition,
+                        ),
+                        positionOnWall,
+                        positionOnSquare:
+                            positionOnWall && this.appState.corners
+                                ? positionOnWallToPositionOnSquare(
+                                      positionOnWall,
+                                      this.appState.corners,
+                                  )
+                                : null,
+                    };
+                });
+
+                //}
+                //{
+
+                const drawingId = uuidv4();
                 const drawing: IDrawing = {
-                    id,
+                    id: drawingId,
                     frames: [],
                 };
                 this.appState.drawings.push(drawing);
                 this.scene.registerAfterRender(() => {
-                    if(controllerPressed){
-                    const drawing = this.appState.drawings.find(
-                        (drawing) => drawing.id == id,
-                    )!;
-                    drawing.frames.push(
-                        babylonMeshToFrame(controller.mesh!)
-                    );
+                    if (controllerPressed) {
+                        //todo do not find every animation frame
+                        const drawing = this.appState.drawings.find(
+                            (drawing) => drawing.id == drawingId,
+                        )!;
+
+                        //todo do not find every animation frame
+                        const controllerState = this.situationState.controllers.find(
+                            (controller) => controller.id == controllerId,
+                        )!;
+
+                        if (
+                            controllerState.currentFrame &&
+                            controllerState.currentFrame.positionOnSquare
+                        ) {
+                            drawing.frames.push(controllerState.currentFrame);
+                        } else {
+                            console.warn(
+                                `You do not have ray on drawing wall!`,
+                            ); //todo is it optimal?
+                        }
                     }
                 });
+            }
+
+            {
             }
 
             controller.onTriggerStateChangedObservable.add((gamepadButton) => {
@@ -194,7 +275,7 @@ export default class World {
                     //---------------------------------------Drawing
                     if (gamepadButton.value === 1) {
                         controllerPressed = true;
-                    }else{
+                    } else {
                         controllerPressed = false;
                     }
                     //---------------------------------------
@@ -244,9 +325,8 @@ export default class World {
             this.scene,
         );
         this.wallMesh.material = this.wallMaterial;
-        console.log('material',this.wallMaterial);
-        console.log('texture',this.wallMaterial.ambientTexture);
-
+        console.log('material', this.wallMaterial);
+        console.log('texture', this.wallMaterial.ambientTexture);
     }
 
     dispose() {

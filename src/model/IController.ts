@@ -2,5 +2,5 @@ import { IFrame } from './IAppState';
 
 export interface IController {
     id: string;
-    currentFrame: IFrame;
+    currentFrame: null | IFrame;
 }

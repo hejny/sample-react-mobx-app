@@ -1,4 +1,4 @@
-import { IVector3 } from './IVectors';
+import { IVector3, IVector2 } from './IVectors';
 import { ICorners } from './ICorners';
 import { IController } from './IController';
 
@@ -11,13 +11,12 @@ export interface IAppState {
 
 export interface IDrawing {
     id: string;
-    frames: IFrame[]
+    frames: IFrame[];
 }
 
-export interface IFrame{
-    position: IVector3
-    rotation: any
+export interface IFrame {
+    time: number;
+    positionInSpace: IVector3;
+    positionOnWall: IVector3 | null;
+    positionOnSquare: IVector2 | null;
 }
-
-//todo f
-//interface

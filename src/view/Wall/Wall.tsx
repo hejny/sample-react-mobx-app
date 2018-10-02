@@ -4,14 +4,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
-import World from '../../3d/World/World';
 import { ISituationState } from '../../model/ISituationState';
-import { convertSceneVectorToWallVector } from '../../tools/convertSceneVectorToWallVector';
 import {
     drawOnWallAppStateDrawing,
     drawOnWallSituationStateControllers,
 } from '../../tools/drawWallDrawing';
-import { render } from 'react-dom';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
@@ -23,35 +20,39 @@ interface IWallProps {
 export const Wall = observer(({ appState, situationState }: IWallProps) => {
     return (
         <div className="Wall">
-            <canvas
-                ref={(canvasElement) => {
-                    if (canvasElement) {
-                        //console.log('Canvas element for wall:', canvasElement);
+            {situationState.world && situationState.world.wallMesh ? (
+                <canvas
+                    ref={(canvasElement) => {
+                        if (canvasElement) {
+                            //console.log('Canvas element for wall:', canvasElement);
 
-                        canvasElement.width = canvasElement.getBoundingClientRect().width;
-                        canvasElement.height = canvasElement.getBoundingClientRect().height;
+                            canvasElement.width = canvasElement.getBoundingClientRect().width;
+                            canvasElement.height = canvasElement.getBoundingClientRect().height;
 
-                        const ctx = canvasElement.getContext('2d')!;
+                            const ctx = canvasElement.getContext('2d')!;
 
-                        const render = ()=>{
-                            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                            drawOnWallAppStateDrawing(
-                                appState.drawings,
-                                appState.corners!,
-                                ctx,
-                            );
-                            drawOnWallSituationStateControllers(
-                                situationState.controllers,
-                                appState.corners!,
-                                ctx,
-                            );
+                            const render = () => {
+                                ctx.clearRect(
+                                    0,
+                                    0,
+                                    ctx.canvas.width,
+                                    ctx.canvas.height,
+                                );
+                                drawOnWallAppStateDrawing(
+                                    appState.drawings,
+                                    ctx,
+                                );
+                                drawOnWallSituationStateControllers(
+                                    situationState.controllers,
+                                    ctx,
+                                );
 
-                            requestAnimationFrame(render);
-                        }
-                        render();
+                                requestAnimationFrame(render);
+                            };
+                            render();
 
-                        TC;
-                        /*
+                            TC;
+                            /*
                         ctx.lineWidth = 10;
                         ctx.lineCap = 'round';
 
@@ -81,9 +82,12 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
                             });
                         });
                         */
-                    }
-                }}
-            />
+                        }
+                    }}
+                />
+            ) : (
+                <div>Pending</div>
+            )}
         </div>
     );
 });

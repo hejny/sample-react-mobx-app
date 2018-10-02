@@ -6,3 +6,6 @@
     border: 2px solid red;
 } 
 
+#babylonVRiconbtn{
+    margin-top: calc( -600px + 100px) ;
+}

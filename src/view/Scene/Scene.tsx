@@ -22,12 +22,12 @@ export const Scene = observer(({ appState, situationState }: ISceneProps) => {
                             canvasElement,
                         );
 
-                        const world = new World(
+                        situationState.world = new World(
                             canvasElement,
                             appState,
                             situationState,
                         );
-                        world.run();
+                        situationState.world.run();
                     }
                 }}
             />

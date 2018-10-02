@@ -12,13 +12,15 @@ export function drawOnWallAppStateDrawing(
     for (const drawing of drawings) {
         const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
         ctx.beginPath();
-        ctx.moveTo(0, 0);
+        let firstPoint = true;
         for (const frame of drawing.frames) {
             if (frame.positionOnSquare) {
-                ctx.lineTo(
+                (firstPoint?ctx.moveTo:ctx.lineTo).call(
+                    ctx,
                     frame.positionOnSquare.x * ctx.canvas.width, //todo ratio
                     frame.positionOnSquare.y * ctx.canvas.height,
                 );
+                firstPoint=false;
             }
             //console.log(point.x,point.y,point.z,wallVector);
         }
@@ -37,6 +39,7 @@ export function drawOnWallSituationStateControllers(
             controller.currentFrame &&
             controller.currentFrame.positionOnSquare
         ) {
+            ctx.beginPath();
             ctx.arc(
                 controller.currentFrame.positionOnSquare.x * ctx.canvas.width, //todo ratio
                 controller.currentFrame.positionOnSquare.y * ctx.canvas.height,
@@ -44,8 +47,9 @@ export function drawOnWallSituationStateControllers(
                 0,
                 Math.PI * 2,
             );
+            ctx.fillStyle = 'red';
+            ctx.fill();
         }
-        ctx.fillStyle = 'red';
-        ctx.fill();
+
     }
 }

@@ -1,6 +1,6 @@
 import { IVector3, IVector2 } from './IVectors';
 import { ICorners } from './ICorners';
-import { IController } from './IController';
+import { IDrawingTool } from './IDrawingTool';
 
 export interface IAppState {
     name: string;
@@ -11,6 +11,7 @@ export interface IAppState {
 
 export interface IDrawing {
     id: string;
+    drawingTool: IDrawingTool;
     frames: IFrame[];
 }
 

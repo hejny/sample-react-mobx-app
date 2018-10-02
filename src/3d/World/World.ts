@@ -121,6 +121,10 @@ export default class World {
 
                 this.situationState.controllers.push({
                     id: controllerId,
+                    drawingTool: {
+                        size: 10,
+                        color: 'blue'
+                    },
                     currentFrame: null,
                 });
 
@@ -190,34 +194,45 @@ export default class World {
                 //}
                 //{
 
-                const drawingId = uuidv4();
-                const drawing: IDrawing = {
-                    id: drawingId,
-                    frames: [],
-                };
-                this.appState.drawings.push(drawing);
+                let currentDrawing: null|IDrawing = null;
+
+
+
+
                 this.scene.registerAfterRender(() => {
                     if (controllerPressed) {
-                        //todo do not find every animation frame
-                        const drawing = this.appState.drawings.find(
-                            (drawing) => drawing.id == drawingId,
-                        )!;
 
                         //todo do not find every animation frame
                         const controllerState = this.situationState.controllers.find(
                             (controller) => controller.id == controllerId,
                         )!;
 
+
+                        if(!currentDrawing){
+                            const drawingId = uuidv4();
+                            currentDrawing = {
+                                id: drawingId,
+                                drawingTool: controllerState.drawingTool,
+                                frames: [],
+                            };
+                            this.appState.drawings.push(currentDrawing);
+                            currentDrawing = this.appState.drawings.find(
+                                (drawing) => drawing.id == drawingId,
+                            )!;
+                        }
+
                         if (
                             controllerState.currentFrame &&
                             controllerState.currentFrame.positionOnSquare
                         ) {
-                            drawing.frames.push(controllerState.currentFrame);
+                            currentDrawing.frames.push(controllerState.currentFrame);
                         } else {
                             console.warn(
                                 `You do not have ray on drawing wall!`,
                             ); //todo is it optimal?
                         }
+                    }else{
+                        currentDrawing = null;
                     }
                 });
             }
@@ -226,7 +241,7 @@ export default class World {
             }
 
             controller.onTriggerStateChangedObservable.add((gamepadButton) => {
-                console.log('Trigger state changed.', gamepadButton);
+                //console.log('Trigger state changed.', gamepadButton);
 
                 if (!this.appState.corners) {
                     //---------------------------------------In calibration process

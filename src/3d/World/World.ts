@@ -100,7 +100,8 @@ export default class World {
             'wallMaterial',
             this.scene,
         );
-        this.wallMaterial.ambientTexture = this.wallTexture;
+        this.wallMaterial.emissiveTexture = this.wallTexture;
+        this.wallMaterial.backFaceCulling = false;
         this.renderWallMesh();
 
         this.VRHelper = this.scene.createDefaultVRExperience();
@@ -313,11 +314,11 @@ export default class World {
             bottomRight,
         } = this.appState.corners;
         const pathArray = [
-            [cleanVectorToBabylon(topLeft), cleanVectorToBabylon(topRight)],
             [
                 cleanVectorToBabylon(bottomLeft),
                 cleanVectorToBabylon(bottomRight),
             ],
+            [cleanVectorToBabylon(topLeft), cleanVectorToBabylon(topRight)],
         ];
         this.wallMesh = BABYLON.MeshBuilder.CreateRibbon(
             'ribbon',

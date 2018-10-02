@@ -106,10 +106,11 @@ export default class World {
 
         this.VRHelper = this.scene.createDefaultVRExperience();
 
+        //todo it should work with only one controller
+        //todo make also on unload
         this.VRHelper.onControllerMeshLoadedObservable.add((controller) => {
             let controllerPressed = false;
 
-            {
                 const controllerId = uuidv4();
                 console.log(
                     `Controller with index ${
@@ -117,8 +118,6 @@ export default class World {
                     } and id "${controllerId}" loaded.`,
                     controller,
                 );
-                //todo make also on unload
-
                 this.situationState.controllers.push({
                     id: controllerId,
                     drawingTool: {
@@ -127,6 +126,9 @@ export default class World {
                     },
                     currentFrame: null,
                 });
+                const controllerState = this.situationState.controllers.find(
+                    (controller) => controller.id == controllerId,
+                )!;//todo maybe better name
 
                 const controllerMeshOnWall = BABYLON.Mesh.CreateSphere(
                     'controllerMeshOnWall',
@@ -134,6 +136,15 @@ export default class World {
                     0.03,
                     this.scene,
                 );
+
+                const controllerMeshOnSpace = BABYLON.Mesh.CreateSphere(
+                    'controllerMeshOnWall',
+                    5,
+                    0.03,
+                    this.scene,
+                );
+                controllerMeshOnSpace.position = controller.devicePosition;
+
                 const ray = new BABYLON.Ray(
                     BABYLON.Vector3.Zero(),
                     BABYLON.Vector3.One(),
@@ -141,13 +152,8 @@ export default class World {
                 );
 
                 this.scene.registerAfterRender(() => {
-                    //todo do not find every animation frame
-                    const controllerState = this.situationState.controllers.find(
-                        (controller) => controller.id == controllerId,
-                    )!;
-
                     let positionOnWall: IVector3 | null = null;
-                    {
+                    if(this.wallMesh){
                         ray.origin = controller.devicePosition;
                         const matrix = new BABYLON.Matrix(); //todo can it be as a global const
                         controller.deviceRotationQuaternion.toRotationMatrix(
@@ -158,7 +164,7 @@ export default class World {
                             matrix,
                         );
 
-                        const hit = this.wallMesh!.getScene().pickWithRay(
+                        const hit = this.wallMesh.getScene().pickWithRay(
                             ray,
                             (mesh) => mesh === this.wallMesh,
                         );
@@ -235,10 +241,8 @@ export default class World {
                         currentDrawing = null;
                     }
                 });
-            }
+            
 
-            {
-            }
 
             controller.onTriggerStateChangedObservable.add((gamepadButton) => {
                 //console.log('Trigger state changed.', gamepadButton);
@@ -297,6 +301,15 @@ export default class World {
                     //---------------------------------------
                 }
             });
+
+
+            controller.onPadValuesChangedObservable.add((gamepadButton) => {
+                if(gamepadButton.y!==0){
+                    controllerState.drawingTool.size = 1+(gamepadButton.y+1)/2*40;
+                }
+            });
+
+
         });
 
         /*

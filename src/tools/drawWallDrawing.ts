@@ -25,7 +25,9 @@ export function drawOnWallAppStateDrawing(
             //console.log(point.x,point.y,point.z,wallVector);
         }
 
-        ctx.strokeStyle = 'blue';
+        ctx.strokeStyle = drawing.drawingTool.color;
+        ctx.lineWidth = drawing.drawingTool.size;
+        ctx.lineCap = 'round';
         ctx.stroke();
     }
 }
@@ -43,11 +45,11 @@ export function drawOnWallSituationStateControllers(
             ctx.arc(
                 controller.currentFrame.positionOnSquare.x * ctx.canvas.width, //todo ratio
                 controller.currentFrame.positionOnSquare.y * ctx.canvas.height,
-                5,
+                controller.drawingTool.size,
                 0,
                 Math.PI * 2,
             );
-            ctx.fillStyle = 'red';
+            ctx.fillStyle = controller.drawingTool.color;
             ctx.fill();
         }
 

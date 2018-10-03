@@ -1,4 +1,4 @@
-export interface IDrawingTool{
-    size: number
-    color: string
+export interface IDrawingTool {
+    size: number;
+    color: string;
 }

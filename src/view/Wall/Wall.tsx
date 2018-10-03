@@ -5,10 +5,7 @@ import { observer } from 'mobx-react';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import { ISituationState } from '../../model/ISituationState';
-import {
-    drawOnWallAppStateDrawing,
-    drawOnWallSituationStateControllers,
-} from '../../tools/drawWallDrawing';
+import { drawOnWall } from '../../wall/drawOnWall';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
@@ -32,20 +29,7 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
                             const ctx = canvasElement.getContext('2d')!;
 
                             const render = () => {
-                                ctx.clearRect(
-                                    0,
-                                    0,
-                                    ctx.canvas.width,
-                                    ctx.canvas.height,
-                                );
-                                drawOnWallAppStateDrawing(
-                                    appState.drawings,
-                                    ctx,
-                                );
-                                drawOnWallSituationStateControllers(
-                                    situationState.controllers,
-                                    ctx,
-                                );
+                                drawOnWall(ctx, appState, situationState);
 
                                 requestAnimationFrame(render);
                             };

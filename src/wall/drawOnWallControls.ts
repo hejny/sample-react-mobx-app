@@ -4,7 +4,7 @@ export function drawOnWallControls(ctx: CanvasRenderingContext2D) {
     drawCircle(
         ctx,
         {
-            x: ctx.canvas.width+50,
+            x: ctx.canvas.width + 50,
             y: ctx.canvas.height,
         },
         10,

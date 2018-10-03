@@ -28,7 +28,35 @@ export const Root = observer(
                 <div>
                     Controllers:
                     {situationState.controllers.map((controller) => (
-                        <div key={controller.id}>
+                        <div className="Controller" key={controller.id}>
+                            <div className="field">
+                                <label>Size:</label>
+                                <input
+                                    type="range"
+                                    min={1}
+                                    max={100}
+                                    step={1}
+                                    value={controller.drawingTool.size}
+                                    onChange={(e) =>
+                                        (controller.drawingTool.size = parseInt(
+                                            e.target.value,
+                                        ))
+                                    }
+                                />
+                            </div>
+                            <div className="field">
+                                <label>Color:</label>
+                                <input
+                                    type="color"
+                                    value={controller.drawingTool.color}
+                                    onChange={(e) =>
+                                        (controller.drawingTool.color =
+                                            e.target.value)
+                                    }
+                                />
+                            </div>
+
+                            {/*
                             <b>{controller.id}:</b>
                             {controller.currentFrame && (
                                 <i>
@@ -47,6 +75,7 @@ export const Root = observer(
                                     ]
                                 </i>
                             )}
+                            */}
                         </div>
                     ))}
                 </div>

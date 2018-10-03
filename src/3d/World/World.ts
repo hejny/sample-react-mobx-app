@@ -1,3 +1,4 @@
+import { WallRenderer } from './../../wall/WallRenderer';
 import { IObservableObject } from 'mobx';
 import { IAppState } from './../../model/IAppState';
 import { MaterialFactory } from './../MaterialFactory';
@@ -10,7 +11,6 @@ import { controllerLoad } from './controllerLoad';
 
 import { ISituationState } from '../../model/ISituationState';
 import { cleanVectorToBabylon } from '../../tools/vectors';
-import { drawOnWall } from '../../wall/drawOnWall';
 
 export default class World {
     public engine: BABYLON.Engine;
@@ -33,6 +33,7 @@ export default class World {
         public canvasElement: HTMLCanvasElement,
         public appState: IAppState & IObservableObject,
         public situationState: ISituationState & IObservableObject,
+        public wallRenderer: WallRenderer
     ) {}
 
     run() {
@@ -65,12 +66,8 @@ export default class World {
 
         this.scene.registerBeforeRender(() => {
             if (this.appState.corners && this.wallMesh) {
-                drawOnWall(
-                    wallTextureContext,
-                    this.appState,
-                    this.situationState,
-                );
-                this.wallTexture.update();
+                this.wallRenderer.addContext(wallTextureContext);
+                this.wallRenderer.subscribe(()=>this.wallTexture.update());
             }
         });
 

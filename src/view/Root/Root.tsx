@@ -8,15 +8,17 @@ import { ISaveState } from '../../controller/saver/ISaveState';
 import { Scene } from '../Scene/Scene';
 import { Wall } from '../Wall/Wall';
 import { ISituationState } from '../../model/ISituationState';
+import { WallRenderer } from '../../wall/WallRenderer';
 
 interface IAppProps {
     appState: IAppState & IObservableObject;
     saveState: ISaveState & IObservableObject;
     situationState: ISituationState & IObservableObject;
+    wallRenderer: WallRenderer;
 }
 
 export const Root = observer(
-    ({ appState, saveState, situationState }: IAppProps) => {
+    ({ appState, saveState, situationState, wallRenderer }: IAppProps) => {
         return (
             <div className="Root">
                 <Message {...{ appState }} />
@@ -80,7 +82,7 @@ export const Root = observer(
                     ))}
                 </div>
 
-                <Wall {...{ appState, situationState }} />
+                <Wall {...{ appState, situationState, wallRenderer }} />
 
                 {appState.corners ? (
                     <button
@@ -111,7 +113,7 @@ export const Root = observer(
                     </button>
                 </div>
 
-                <Scene {...{ appState, situationState }} />
+                <Scene {...{ appState, situationState, wallRenderer }} />
             </div>
         );
     },

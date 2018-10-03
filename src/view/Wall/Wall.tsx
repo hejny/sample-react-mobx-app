@@ -5,16 +5,18 @@ import { observer } from 'mobx-react';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import { ISituationState } from '../../model/ISituationState';
-import { drawOnWall } from '../../wall/drawOnWall';
+import { WallRenderer } from '../../wall/WallRenderer';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
     situationState: ISituationState & IObservableObject;
+    wallRenderer: WallRenderer;
 }
 
 //todo hide when appState.corners calibration in process
 
-export const Wall = observer(({ appState, situationState }: IWallProps) => {
+export const Wall = observer(({ appState, situationState,wallRenderer }: IWallProps) => {
+    console.log(`@Rendering Wall (this should occur only once)(!!! test and remove).`);//todo test and remove
     return (
         <div className="Wall">
             {situationState.world && situationState.world.wallMesh ? (
@@ -27,13 +29,7 @@ export const Wall = observer(({ appState, situationState }: IWallProps) => {
                             canvasElement.height = canvasElement.getBoundingClientRect().height;
 
                             const ctx = canvasElement.getContext('2d')!;
-
-                            const render = () => {
-                                drawOnWall(ctx, appState, situationState);
-
-                                requestAnimationFrame(render);
-                            };
-                            render();
+                            wallRenderer.addContext(ctx);
 
                             TC;
                             /*

@@ -5,13 +5,15 @@ import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import World from '../../3d/World/World';
 import { ISituationState } from '../../model/ISituationState';
+import { WallRenderer } from '../../wall/WallRenderer';
 
 interface ISceneProps {
     appState: IAppState & IObservableObject;
     situationState: ISituationState & IObservableObject;
+    wallRenderer: WallRenderer;
 }
 
-export const Scene = observer(({ appState, situationState }: ISceneProps) => {
+export const Scene = observer(({ appState, situationState, wallRenderer }: ISceneProps) => {
     return (
         <div className="Scene">
             <canvas
@@ -26,6 +28,7 @@ export const Scene = observer(({ appState, situationState }: ISceneProps) => {
                             canvasElement,
                             appState,
                             situationState,
+                            wallRenderer
                         );
                         situationState.world.run();
                     }

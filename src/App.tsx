@@ -25,6 +25,10 @@ export class App {
         this.wallRenderer = new WallRenderer(
             this.appState,
             this.situationState,
+            {
+                x: 1024,
+                y: 1024
+            }
         );
 
         ReactDOM.render(

@@ -8,7 +8,7 @@ import { ISaveState } from '../../controller/saver/ISaveState';
 import { Scene } from '../Scene/Scene';
 import { Wall } from '../Wall/Wall';
 import { ISituationState } from '../../model/ISituationState';
-import { WallRenderer } from '../../wall/WallRenderer';
+import { CanvasParticlesRenderer as WallRenderer } from 'touchcontroller';
 
 interface IAppProps {
     appState: IAppState & IObservableObject;

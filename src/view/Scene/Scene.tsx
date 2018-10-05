@@ -5,7 +5,7 @@ import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import World from '../../3d/World/World';
 import { ISituationState } from '../../model/ISituationState';
-import { WallRenderer } from '../../wall/WallRenderer';
+import { CanvasParticlesRenderer as WallRenderer } from 'touchcontroller';
 
 interface ISceneProps {
     appState: IAppState & IObservableObject;

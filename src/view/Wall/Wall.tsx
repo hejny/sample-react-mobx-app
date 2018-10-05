@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import { ISituationState } from '../../model/ISituationState';
-import { WallRenderer } from '../../wall/WallRenderer';
+import { CanvasParticlesRenderer as WallRenderer } from 'touchcontroller';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;

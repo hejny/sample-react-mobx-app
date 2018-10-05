@@ -1,3 +1,4 @@
+import * as TC from 'touchcontroller';
 import { ControlWheel } from '../../tools/ControlWheel';
 import { ControllerVibrations } from './../../tools/ControllerVibrations';
 import { IVector3 } from './../../model/IVectors';
@@ -123,7 +124,36 @@ export function controllerLoad(
                 controllerState.currentFrame &&
                 controllerState.currentFrame.positionOnSquare
             ) {
-                currentDrawing.frames.push(controllerState.currentFrame);
+                //todo save drawings currentDrawing.frames.push(controllerState.currentFrame);
+
+                
+                if(controllerState.currentFrame.positionOnWall){
+                    const particleOptions = {
+                        shapeSrc: './assets/particles/blob.png',
+                        shapeCenter: new TC.Vector2(0.5, 0.5),
+                        color: controllerState.drawingTool.color,
+                        current: {
+                            position: new TC.Vector2(//todo better directly deserialize
+                                controllerState.currentFrame.positionOnSquare.x*1024,
+                                controllerState.currentFrame.positionOnSquare.y*1024
+                            ),
+                            rotation: 0,
+                            widthSize: 1,
+                        }, 
+                        movement: {
+                            position: new TC.Vector2(
+                                (Math.random() - 0.5) * 10, //todo depend this value
+                                (Math.random() - 0.5) * 10,
+                            ),
+                            rotation: ((Math.random() - 0.5) * Math.PI * 2),
+                            widthSize: 20,
+                        },
+                        friction:  0.2
+                    };
+                    //console.log(particleOptions);
+                    world.wallRenderer.addPoint(particleOptions);
+                    /**/
+                }
             } else {
                 console.warn(`You do not have ray on drawing wall!`); //todo is it optimal?
             }

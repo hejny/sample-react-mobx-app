@@ -1,4 +1,4 @@
-import { WallRenderer } from './../../wall/WallRenderer';
+import { CanvasParticlesRenderer as WallRenderer } from 'touchcontroller';
 import { IObservableObject } from 'mobx';
 import { IAppState } from './../../model/IAppState';
 import { MaterialFactory } from './../MaterialFactory';
@@ -66,8 +66,13 @@ export default class World {
 
         this.scene.registerBeforeRender(() => {
             if (this.appState.corners && this.wallMesh) {
+                /*
                 this.wallRenderer.addContext(wallTextureContext);
-                this.wallRenderer.subscribe(()=>this.wallTexture.update());
+                setInterval(()=>{
+                    this.wallTexture.update();
+                },1000);
+                */
+                //this.wallRenderer.subscribe(()=>this.wallTexture.update());
             }
         });
 

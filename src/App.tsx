@@ -8,7 +8,7 @@ import { saveAppStateAfterChange } from './controller/saver/saveAppStateAfterCha
 import { Root } from './view/Root/Root';
 import { ISituationState } from './model/ISituationState';
 import { createDefaultSituationState } from './model/createDefaultSituationState';
-import { WallRenderer } from './wall/WallRenderer';
+import * as TC from 'touchcontroller';
 
 export class App {
     constructor(private rootElement: HTMLDivElement) {}
@@ -16,20 +16,13 @@ export class App {
     public appState: IAppState & IObservableObject;
     public saveState: ISaveState & IObservableObject;
     public situationState: ISituationState & IObservableObject;
-    public wallRenderer: WallRenderer;
+    public wallRenderer: TC.CanvasParticlesRenderer;
 
     run() {
         this.appState = restoreAppState();
         this.saveState = saveAppStateAfterChange(this.appState);
         this.situationState = observable(createDefaultSituationState());
-        this.wallRenderer = new WallRenderer(
-            this.appState,
-            this.situationState,
-            {
-                x: 1024,
-                y: 1024
-            }
-        );
+        this.wallRenderer = new TC.CanvasParticlesRenderer(new TC.Vector2(1024,1024));
 
         ReactDOM.render(
             <Root

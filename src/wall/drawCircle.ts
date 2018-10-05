@@ -15,3 +15,27 @@ export function drawCircle(
     ctx.lineWidth = 1;
     ctx.stroke();
 }
+
+export function drawCircleStroke(
+    ctx: CanvasRenderingContext2D,
+    position: IVector2,
+    size: number,
+    color: string,
+) {
+    ctx.beginPath();
+    ctx.arc(position.x, position.y, size, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
+
+export function drawCircleHighlighted(
+    ctx: CanvasRenderingContext2D,
+    position: IVector2,
+    size: number,
+    color: string,
+) {
+    drawCircleStroke(ctx,position,size-1,'white');
+    drawCircleStroke(ctx,position,size+0,color);
+    drawCircleStroke(ctx,position,size+1,'white');
+}

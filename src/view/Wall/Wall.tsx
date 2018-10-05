@@ -6,6 +6,7 @@ import { IAppState } from '../../model/IAppState';
 import { IObservableObject } from 'mobx';
 import { ISituationState } from '../../model/ISituationState';
 import { CanvasParticlesRenderer as WallRenderer } from 'touchcontroller';
+import { drawOnWallSituationStateControllers } from '../../wall/drawOnWallSituationStateControllers';
 
 interface IWallProps {
     appState: IAppState & IObservableObject;
@@ -30,6 +31,10 @@ export const Wall = observer(({ appState, situationState,wallRenderer }: IWallPr
 
                             const ctx = canvasElement.getContext('2d')!;
                             wallRenderer.addContext(ctx);
+                            //todo add wallRendererEnhancer
+                            wallRenderer.subscribe(()=>{
+                                drawOnWallSituationStateControllers(ctx,situationState.controllers);
+                            })
 
                             TC;
                             /*

@@ -1,5 +1,5 @@
 import { IController } from './../model/IController';
-import { drawCircle } from './drawCircle';
+import { drawCircleStroke, drawCircleHighlighted } from './drawCircle';
 
 export function drawOnWallSituationStateControllers(
     ctx: CanvasRenderingContext2D,
@@ -10,7 +10,7 @@ export function drawOnWallSituationStateControllers(
             controller.currentFrame &&
             controller.currentFrame.positionOnSquare
         ) {
-            drawCircle(
+            drawCircleHighlighted(
                 ctx,
                 {
                     x:

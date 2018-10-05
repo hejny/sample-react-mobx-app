@@ -138,7 +138,7 @@ export function controllerLoad(
                                 controllerState.currentFrame.positionOnSquare.y*1024
                             ),
                             rotation: 0,
-                            widthSize: 1,
+                            widthSize: controllerState.drawingTool.size,
                         }, 
                         movement: {
                             position: new TC.Vector2(

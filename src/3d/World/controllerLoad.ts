@@ -137,21 +137,21 @@ export function controllerLoad(
                         color: controllerState.drawingTool.color,
                         current: {
                             position: new TC.Vector2(//todo better directly deserialize
-                                controllerState.currentFrame.positionOnSquare.x*1024,
-                                controllerState.currentFrame.positionOnSquare.y*1024
+                                controllerState.currentFrame.positionOnSquare.x*window.innerWidth,//todo better sizes
+                                controllerState.currentFrame.positionOnSquare.y*window.innerHeight
                             ),
                             rotation: 0,
-                            widthSize: controllerState.drawingTool.size,
+                            widthSize: controllerState.drawingTool.size*1.6,
                         }, 
                         movement: {
                             position: new TC.Vector2(
                                 (Math.random() - 0.5) * 10, //todo depend this value
                                 (Math.random() - 0.5) * 10,
                             ),
-                            rotation: ((Math.random() - 0.5) * Math.PI * 2),
-                            widthSize: 20,
+                            rotation: ((Math.random() - 0.5) * Math.PI * 2 / 3),
+                            widthSize: 13,
                         },
-                        friction:  0.2
+                        friction:  0.1
                     };
                     //console.log(particleOptions);
                     world.wallRenderer.addPoint(particleOptions);

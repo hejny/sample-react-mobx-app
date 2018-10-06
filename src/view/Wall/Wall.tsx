@@ -26,8 +26,10 @@ export const Wall = observer(({ appState, situationState,wallRenderer }: IWallPr
                         if (canvasElement) {
                             //console.log('Canvas element for wall:', canvasElement);
 
-                            canvasElement.width = canvasElement.getBoundingClientRect().width;
-                            canvasElement.height = canvasElement.getBoundingClientRect().height;
+
+                            //(window.innerWidth,window.innerHeight));//todo do sizes better
+                            canvasElement.width = window.innerWidth;//canvasElement.getBoundingClientRect().width;
+                            canvasElement.height = window.innerHeight;//canvasElement.getBoundingClientRect().height;
 
                             const ctx = canvasElement.getContext('2d')!;
                             wallRenderer.addContext(ctx);

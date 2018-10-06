@@ -84,6 +84,7 @@ export const Root = observer(
 
                 <Wall {...{ appState, situationState, wallRenderer }} />
 
+                <div className="Tools">
                 {appState.corners ? (
                     <button
                         onClick={() => {
@@ -100,6 +101,7 @@ export const Root = observer(
                     </div>
                 )}
 
+                {/*
                 <div>
                     Wall contains {appState.drawings.length} drawings.
                     <button
@@ -111,6 +113,7 @@ export const Root = observer(
                     >
                         clean
                     </button>
+                </div>*/}
                 </div>
 
                 <Scene {...{ appState, situationState, wallRenderer }} />

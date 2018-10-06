@@ -81,6 +81,7 @@ export default class World {
             this.scene,
         );
         this.wallMaterial.emissiveTexture = this.wallTexture;
+        this.wallMaterial.diffuseColor = BABYLON.Color3.FromHexString('#000000');
         this.wallMaterial.backFaceCulling = false;
         this.renderWallMesh();
 
@@ -124,8 +125,8 @@ export default class World {
             this.scene,
         );
         this.wallMesh.material = this.wallMaterial;
-        console.log('material', this.wallMaterial);
-        console.log('texture', this.wallMaterial.ambientTexture);
+        //console.log('material', this.wallMaterial);
+        //console.log('texture', this.wallMaterial.ambientTexture);
     }
 
     dispose() {

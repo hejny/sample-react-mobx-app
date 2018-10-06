@@ -1,4 +1,5 @@
 import { IVector2 } from '../model/IVectors';
+import * as Color from 'color';
 
 export function drawCircle(
     ctx: CanvasRenderingContext2D,
@@ -7,6 +8,7 @@ export function drawCircle(
     color: string,
     //todo maybe border options
 ) {
+    if(size<1)return;
     ctx.beginPath();
     ctx.arc(position.x, position.y, size, 0, Math.PI * 2);
     ctx.fillStyle = color;
@@ -20,12 +22,14 @@ export function drawCircleStroke(
     ctx: CanvasRenderingContext2D,
     position: IVector2,
     size: number,
+    lineWidth: number,
     color: string,
 ) {
+    if(size<1)return;
     ctx.beginPath();
     ctx.arc(position.x, position.y, size, 0, Math.PI * 2);
     ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = lineWidth;
     ctx.stroke();
 }
 
@@ -35,7 +39,6 @@ export function drawCircleHighlighted(
     size: number,
     color: string,
 ) {
-    drawCircleStroke(ctx,position,size-1,'white');
-    drawCircleStroke(ctx,position,size+0,color);
-    drawCircleStroke(ctx,position,size+1,'white');
+    drawCircleStroke(ctx,position,size,6,Color(color).negate().hex().toString());
+    drawCircleStroke(ctx,position,size,4,color);
 }

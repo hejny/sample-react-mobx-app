@@ -9,6 +9,8 @@ import * as BABYLON from 'babylonjs';
 import { babylonToCleanVector } from '../../tools/vectors';
 import { positionOnWallToPositionOnSquare } from '../../tools/positionOnWallToPositionOnSquare';
 import World from './World';
+import * as Color from 'color';
+import { WHEEL_CHANGING_OPTIONS } from '../../model/IController';
 
 export function controllerLoad(
     controller: BABYLON.WebVRController,
@@ -25,9 +27,10 @@ export function controllerLoad(
     );
     world.situationState.controllers.push({
         id: controllerId,
+        wheelChanging: WHEEL_CHANGING_OPTIONS[0],
         drawingTool: {
             size: 10,
-            color: 'blue',
+            color: '#ff0000',
         },
         currentFrame: null,
     });
@@ -209,21 +212,56 @@ export function controllerLoad(
         }
     });
 
-    const controllWheel = new ControlWheel();
+    const controlWheel = new ControlWheel();
     const controllerWheelVibrations = new ControllerVibrations(
         controller,
         0.1,
         10,
     );
-    controllWheel.values.subscribe((value) => {
+
+    controlWheel.values.subscribe((value) => {
+
         controllerWheelVibrations.start();
-        controllerState.drawingTool.size += value;
-        if (controllerState.drawingTool.size < 1)
-            controllerState.drawingTool.size = 1;
+        switch(controllerState.wheelChanging){
+            case 'SIZE':
+                controllerState.drawingTool.size = Math.max(1,Math.min(controllerState.drawingTool.size+value,100));//todo range
+                console.log( controllerState.drawingTool.size );
+                break;
+            case 'COLOR_HUE':
+                let hue = Color(controllerState.drawingTool.color).hue();
+                hue+=value;
+                controllerState.drawingTool.color = Color(controllerState.drawingTool.color).hue(hue).hex().toString();
+                console.log(controllerState.drawingTool.color);
+                break;
+            case 'COLOR_SATURATION':
+                let saturaion = Color(controllerState.drawingTool.color).saturationl();
+                saturaion+=value;
+                controllerState.drawingTool.color = Color(controllerState.drawingTool.color).saturationl(saturaion).hex().toString();
+                console.log(controllerState.drawingTool.color);
+                break;
+            case 'COLOR_LIGHT':
+                let lightness = Color(controllerState.drawingTool.color).lightness();
+                lightness+=value;
+                controllerState.drawingTool.color = Color(controllerState.drawingTool.color).lightness(lightness).hex().toString();
+                console.log(controllerState.drawingTool.color);
+                break;
+        }
+        
+
     });
 
     controller.onPadValuesChangedObservable.add((gamepadButton) => {
-        controllWheel.impulse(gamepadButton);
+        controlWheel.impulse(gamepadButton);
+    });
+
+    controller.onPadStateChangedObservable.add((gamepadButton) => {
+        console.log('onPadStateChangedObservable',gamepadButton);
+        if(gamepadButton.pressed){
+            const i = WHEEL_CHANGING_OPTIONS.indexOf(controllerState.wheelChanging)
+            controllerState.wheelChanging = WHEEL_CHANGING_OPTIONS[(i+1)%4];
+            console.log(controllerState.wheelChanging);
+            
+        }
     });
 
     controller.onSecondaryButtonStateChangedObservable.add((gamepadButton) => {

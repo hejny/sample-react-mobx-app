@@ -103,6 +103,7 @@ export function controllerLoad(
 
     let currentDrawing: null | IDrawing = null;
 
+    let position1: null|TC.Vector2;
     world.scene.registerAfterRender(() => {
         if (controllerPressed) {
             //todo do not find every animation frame
@@ -131,37 +132,56 @@ export function controllerLoad(
 
                 
                 if(controllerState.currentFrame.positionOnWall){
-                    const particleOptions = {
-                        shapeSrc: './assets/particles/blob.png',
-                        shapeCenter: new TC.Vector2(0.5, 0.5),
-                        color: controllerState.drawingTool.color,
-                        current: {
-                            position: new TC.Vector2(//todo better directly deserialize
-                                controllerState.currentFrame.positionOnSquare.x*window.innerWidth,//todo better sizes
-                                controllerState.currentFrame.positionOnSquare.y*window.innerHeight
-                            ),
-                            rotation: 0,
-                            widthSize: controllerState.drawingTool.size*1.6,
-                        }, 
-                        movement: {
-                            position: new TC.Vector2(
-                                (Math.random() - 0.5) * 10, //todo depend this value
-                                (Math.random() - 0.5) * 10,
-                            ),
-                            rotation: ((Math.random() - 0.5) * Math.PI * 2 / 3),
-                            widthSize: 13,
-                        },
-                        friction:  0.1
-                    };
-                    //console.log(particleOptions);
-                    world.wallRenderer.addPoint(particleOptions);
-                    /**/
+
+
+                    const position2 = new TC.Vector2(//todo better directly deserialize
+                        controllerState.currentFrame.positionOnSquare.x*window.innerWidth,//todo better sizes
+                        controllerState.currentFrame.positionOnSquare.y*window.innerHeight
+                    );
+                    if(!position1)position1=position2;
+
+                    const segments = Math.ceil(position1.length(position2)/(controllerState.drawingTool.size*1));
+                    
+                    const positionAdd = position2.subtract(position1).scaleInPlace(1/segments);
+                    const positionCurrent = position1.clone();
+
+                    //console.log(segments,positionAdd);
+
+                    for(let i =0;i<segments;i++){
+
+                        const particleOptions = {
+                            shapeSrc: './assets/particles/blob.png',
+                            shapeCenter: new TC.Vector2(0.5, 0.5),
+                            color: controllerState.drawingTool.color,
+                            current: {
+                                position: positionCurrent.clone(),
+                                rotation: 0,
+                                widthSize: controllerState.drawingTool.size*1.6,
+                            }, 
+                            movement: {
+                                position: new TC.Vector2(
+                                    (Math.random() - 0.5) * 0, //todo depend this value
+                                    (Math.random() - 0.5) * 0,
+                                ),
+                                rotation: ((Math.random() - 0.5) * Math.PI * 2 / 3),
+                                widthSize: 11,
+                            },
+                            friction:  0.07
+                        };
+                        //console.log(particleOptions);
+                        world.wallRenderer.addPoint(particleOptions);
+                        positionCurrent.addInPlace(positionAdd);
+                    }
+
+                    position1=position2;
                 }
             } else {
                 console.warn(`You do not have ray on drawing wall!`); //todo is it optimal?
+                position1=null;
             }
         } else {
             currentDrawing = null;
+            position1=null;
         }
     });
 
